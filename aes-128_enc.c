@@ -22,6 +22,21 @@ uint8_t xtime(uint8_t p)
 }
 
 /*
+ * Constant-time ``broadcast-based'' multiplication by $a$ in $F_2[X]/X^8 + X^6 + X^5 + X^4 + X^3 + X + 1$
+ *Answer to Q1 : variant of xtime for a different representation
+ */
+uint8_t xtimevariant(uint8_t p)
+{
+	uint8_t m = p >> 7;
+
+	m ^= 1;
+	m -= 1;
+	m &= 0x7B;
+
+	return ((p << 1) ^ m);
+}
+
+/*
  * The round constants
  */
 static const uint8_t RC[10] = {0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x1B, 0x36};
