@@ -183,6 +183,17 @@ void aes128_enc(uint8_t block[AES_BLOCK_SIZE], const uint8_t key[AES_128_KEY_SIZ
 	}
 }
 
+uint8_t aes128_keyed_func(uint8_t key1[AES_128_KEY_SIZE], uint8_t key2[AES_128_KEY_SIZE], uint8_t block[AES_BLOCK_SIZE]) {
+	
+	uint8_t enc1[AES_BLOCK_SIZE];
+	uint8_t enc2[AES_BLOCK_SIZE];
+	enc1 = block;
+	enc2 = block;
+	aes128_enc(enc1, key1, 3, 1);
+	aes128_enc(enc2, key2, 3, 1);
+	return (enc1^enc2);
+}
+
 int main (){
 	printf("Original text : \n");
 	int i;

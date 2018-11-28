@@ -81,3 +81,6 @@ uint8_t ciphertext_example[AES_BLOCK_SIZE] = {
  * The ``master decryption key'' is the 10-th round key (for a full AES-128)
  */
 void prev_aes128_round_key(const uint8_t next_key[16], uint8_t prev_key[16], int round);
+
+
+uint8_t aes_part_decrypt_byte (uint8_t state_byte, uint8_t key_byte);
