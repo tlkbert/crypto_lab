@@ -116,12 +116,12 @@ void next_aes128_round_key(const uint8_t prev_key[16], uint8_t next_key[16], int
 	{
 		next_key[i] = prev_key[i] ^ next_key[i - 4];
 	}
-	printf("Next key is :\n");
+	/*printf("Next key is :\n");
 	for (i = 0; i < 16; i++){
 
 		printf("%02X",next_key[i] );
 	}
-	printf("\n");
+	printf("\n");*/
 }
 
 /*
@@ -183,32 +183,70 @@ void aes128_enc(uint8_t block[AES_BLOCK_SIZE], const uint8_t key[AES_128_KEY_SIZ
 	}
 }
 
-uint8_t aes128_keyed_func(uint8_t key1[AES_128_KEY_SIZE], uint8_t key2[AES_128_KEY_SIZE], uint8_t block[AES_BLOCK_SIZE]) {
-	
+void aes128_keyed_func(uint8_t key1[AES_128_KEY_SIZE], uint8_t key2[AES_128_KEY_SIZE], uint8_t block[AES_BLOCK_SIZE]) {
+
 	uint8_t enc1[AES_BLOCK_SIZE];
 	uint8_t enc2[AES_BLOCK_SIZE];
-	enc1 = block;
-	enc2 = block;
+	int i;
+	for (i = 0 ; i < AES_BLOCK_SIZE; i++) {
+		enc1[i] = block[i];
+		enc2[i] = block[i];
+	}
 	aes128_enc(enc1, key1, 3, 1);
 	aes128_enc(enc2, key2, 3, 1);
-	return (enc1^enc2);
+	for (i = 0 ; i < AES_BLOCK_SIZE; i++) {
+		block[i] = enc1[i] ^ enc2[i];
+	}
+}
+
+uint8_t distinguisher(uint8_t key[AES_128_KEY_SIZE], int k){
+	uint8_t plaintext[256][AES_BLOCK_SIZE];
+	//uint8_t encrypted[256][16];
+	uint8_t block[AES_BLOCK_SIZE];
+	uint8_t x;
+	int i,j;
+	for (i=0;i<256;i++){
+		for(j=0;j<16;j++){
+			plaintext[i][j]=j+1;
+		}
+	}
+
+	for(i=0;i<256;i++){
+		for (j=0;j<16;j++){
+			block[j]=plaintext[i][j];
+		}
+
+		aes128_enc(block,key,3,1);
+
+		for (j=0;j<16;j++){
+			plaintext[i][j]=block[j];
+		}
+	}
+
+	x=plaintext[0][0];
+	for(i=1;i<256;i++){
+		x^=plaintext[i][0];
+	}
+	printf("Distinguisher with KEY Number: %d \n",k);
+	printf("The XOR of the 255 Pi is : %02X \n", x );
+	return x;
 }
 
 int main (){
-	printf("Original text : \n");
+	/*printf("Original text : \n");
 	int i;
 	for (i = 0 ; i < 16; i++){
 		printf("%02X", plaintext_example[i]); //the plaintext before encryption
 	}
-	printf("\n");
-	aes128_enc(plaintext_example, key_example, 10, 0);
-	printf("Cipher text : \n" );
+	printf("\n");*/
+	//distinguisher(key_example, 1);
+	/*printf("Cipher text : \n" );
 	for (i = 0 ; i < 16; i++){
 		printf("%02X", plaintext_example[i]);//the cipher text
 	}
 	printf("\n");
 	uint8_t x[16] ={0xd6, 0xaa, 0x74, 0xfd, 0xd2, 0xaf, 0x72, 0xfa, 0xda, 0xa6, 0x78, 0xf1, 0xd6, 0xab, 0x76, 0xfe};
   uint8_t y[16];
-	prev_aes128_round_key(x,y, 0);
+	prev_aes128_round_key(x,y, 0);*/
 	return 0;
 }
