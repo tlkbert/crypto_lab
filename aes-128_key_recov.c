@@ -3,15 +3,15 @@
 
 //partial decryption by 1/2 round of one state byte, given one byte of the key
 
-uint8_t aes_part_decrypt (uint8_t state[AES_BLOCK_SIZE], uint8_t key[AES_128_KEY_SIZE]) {
-// for the first row (0 to 3)
-	int i;
-	uint8_t prev_state[AES_BLOCK_SIZE];
-	uint8_t temp;
+void aes_part_decrypt(uint8_t state[AES_BLOCK_SIZE], uint8_t key[AES_128_KEY_SIZE]) {
 
+	int i;
+	uint8_t temp;
+	uint8_t prev_key[AES_128_KEY_SIZE];
+	// inv ARK & inv SB with the key of round 5 generated at the end of round 4
 	for (i = 0 ; i < 16; i++) {
-		state[i] ^ = key[i]; //ARK inv
-		state[i] = Sinv[state[i]; //SB inv
+		state[i] = state[i] ^ key[i];
+		state[i] = Sinv[state[i]];
 	}
 
 	//inverse shiftrows
@@ -25,20 +25,25 @@ uint8_t aes_part_decrypt (uint8_t state[AES_BLOCK_SIZE], uint8_t key[AES_128_KEY
 	temp = state[10];
 	state[ 10] = state[2];
 	state[ 2] = temp;
-	tmp = block[14];
+	temp = state[14];
 	state[ 14] = state[ 6];
 	state[6] = temp;
 	/* Row 3 */
-	tmp = block[3];
+	temp = state[3];
 	state[ 3] = state[ 7];
 	state[ 7] = state[ 11];
 	state[11] = state[15];
-	state[ 15] = tmp;
+	state[ 15] = temp;
 
+	/* inv ARK with the key of round 4 which have been generated at 
+	the end of round 3 and used for round 4*/
+	prev_aes128_round_key(key, prev_key, 3);
 	for (i = 0 ; i < 16; i++) {
-		state[i] ^ = key[i]; //ARK inv
-		prev_state[i] = state[i]; //copy into prev_state
+		state[i] = state[i] ^ prev_key[i];
 	}
+}
 
-	return (prev_state);
+void aes_part_decrypt_byte(uint8_t state_byte, uint8_t key_byte) {
+	state_byte = state_byte ^ key_byte;
+	state_byte = Sinv[state_byte];
 }

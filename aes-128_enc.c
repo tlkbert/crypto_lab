@@ -7,6 +7,7 @@
 
 #include "aes-128_enc.h"
 #include <stdio.h>
+#include <stdlib.h>
 /*
  * Constant-time ``broadcast-based'' multiplication by $a$ in $F_2[X]/X^8 + X^4 + X^3 + X + 1$
  */
@@ -140,11 +141,11 @@ void prev_aes128_round_key(const uint8_t next_key[16], uint8_t prev_key[16], int
 	prev_key[1] = next_key[1] ^ S[prev_key[14]];
 	prev_key[2] = next_key[2] ^ S[prev_key[15]];
 	prev_key[3] = next_key[3] ^ S[prev_key[12]];
-	printf("Prev key is :\n");
+	/*printf("Prev key is :\n");
 	for (i = 0; i < 16; i++){
 		printf("%02X",prev_key[i] );
 	}
-	printf("\n");
+	printf("\n");*/
 
 }
 
@@ -199,54 +200,20 @@ void aes128_keyed_func(uint8_t key1[AES_128_KEY_SIZE], uint8_t key2[AES_128_KEY_
 	}
 }
 
-uint8_t distinguisher(uint8_t key[AES_128_KEY_SIZE], int k){
-	uint8_t plaintext[256][AES_BLOCK_SIZE];
-	//uint8_t encrypted[256][16];
-	uint8_t block[AES_BLOCK_SIZE];
-	uint8_t x;
+void distinguisher(uint8_t plaintexts[256][AES_BLOCK_SIZE]){
+	uint8_t sum[AES_BLOCK_SIZE];
 	int i,j;
-	for (i=0;i<256;i++){
-		for(j=0;j<16;j++){
-			plaintext[i][j]=j+1;
+	for (i = 0; i < 16; i++) {
+		sum[i]=plaintexts[0][i];
+	}
+	for(i = 0; i < AES_BLOCK_SIZE ;i++){
+		for (j = 1; j < 256; j++) {
+			sum[i]^=plaintexts[j][i];
 		}
 	}
-
-	for(i=0;i<256;i++){
-		for (j=0;j<16;j++){
-			block[j]=plaintext[i][j];
-		}
-
-		aes128_enc(block,key,3,1);
-
-		for (j=0;j<16;j++){
-			plaintext[i][j]=block[j];
-		}
+	printf("The sum is: \n");
+	for (i = 0; i < 16; i++) {
+		printf("%02X", sum[i]);
 	}
-
-	x=plaintext[0][0];
-	for(i=1;i<256;i++){
-		x^=plaintext[i][0];
-	}
-	printf("Distinguisher with KEY Number: %d \n",k);
-	printf("The XOR of the 255 Pi is : %02X \n", x );
-	return x;
 }
 
-int main (){
-	/*printf("Original text : \n");
-	int i;
-	for (i = 0 ; i < 16; i++){
-		printf("%02X", plaintext_example[i]); //the plaintext before encryption
-	}
-	printf("\n");*/
-	//distinguisher(key_example, 1);
-	/*printf("Cipher text : \n" );
-	for (i = 0 ; i < 16; i++){
-		printf("%02X", plaintext_example[i]);//the cipher text
-	}
-	printf("\n");
-	uint8_t x[16] ={0xd6, 0xaa, 0x74, 0xfd, 0xd2, 0xaf, 0x72, 0xfa, 0xda, 0xa6, 0x78, 0xf1, 0xd6, 0xab, 0x76, 0xfe};
-  uint8_t y[16];
-	prev_aes128_round_key(x,y, 0);*/
-	return 0;
-}
