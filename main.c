@@ -1,5 +1,6 @@
 #include "aes-128_enc.h"
 #include <stdio.h>
+#include <stdlib.h>
 
 uint8_t plaintext_example[AES_BLOCK_SIZE] = {
 	0x00, 0x11, 0x22, 0x33,
@@ -25,28 +26,30 @@ uint8_t key[AES_128_KEY_SIZE] = {
 int main (int argc, char ** argv){
 	//Attack implementation
 	
-	uint8_t plaintexts[256][AES_BLOCK_SIZE];
-	uint8_t key_guess[AES_128_KEY_SIZE];
+	uint8_t **plaintext=NULL;
 	int i, j;
-	// Entering the key guess
-	for (i = 0; i < 16; i++) {
-		printf("Enter the byte %d of the key guess", i);
-		scanf("%02X", &key_guess[i]);
-	}
+	plaintext = malloc(sizeof(uint8_t *) * 256);
 	for (i = 0; i < 256; i++) {
-		for (j = 0; j < 16; j++) {
-			plaintexts[i][j] = i+j+1;
+		plaintext[i] = malloc(sizeof(uint8_t) * 16);
+	}
+	//building the set of plaintexts
+	for (i=0;i<256;i++) {
+		plaintext[i][0]=i;
+	}
+	for (i=0;i<256;i++) {
+		for(j=1;j<16;j++) {
+			plaintext[i][j]=j+1;
 		}
-	} 
+	}
+	//printf("plaintext[0][10]:%02X et 255 10:%02X\n", plaintext[0][10], plaintext[255][10]);
 	// Queries to the encryption oracle
 	for (i = 0; i < 256; i++) {
-		aes128_enc(plaintexts[i], key, 4, 0);
+		aes128_enc(plaintext[i], key, 4, 0);
 	}
+	//printf("plaintext[0][10]:%02X et 255 10:%02X", plaintext[0][10], plaintext[255][10]);
 	//Partial decryption of the 1/2 round and call to the distinguisher
-	for (i = 0; i < 256; i++) {
-		aes_part_decrypt(plaintexts[i], key_guess);
-	}
-	distinguisher(plaintexts);
+	attack(plaintext);
+	//aes_part_decrypt_byte(0x77, 5);
 	return 0;
 }
 

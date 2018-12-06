@@ -200,20 +200,29 @@ void aes128_keyed_func(uint8_t key1[AES_128_KEY_SIZE], uint8_t key2[AES_128_KEY_
 	}
 }
 
-void distinguisher(uint8_t plaintexts[256][AES_BLOCK_SIZE]){
-	uint8_t sum[AES_BLOCK_SIZE];
+void distinguisher(uint8_t plaintext[256][AES_BLOCK_SIZE]) {
+	
+	//uint8_t block[AES_BLOCK_SIZE];
+	uint8_t sum[16];
 	int i,j;
-	for (i = 0; i < 16; i++) {
-		sum[i]=plaintexts[0][i];
+	//xor all the plaintexts
+	for(i=0;i<16;i++) {
+		sum[i]=plaintext[0][i];
 	}
-	for(i = 0; i < AES_BLOCK_SIZE ;i++){
-		for (j = 1; j < 256; j++) {
-			sum[i]^=plaintexts[j][i];
+	for(i=0;i<16;i++) {
+		for(j=1;j<256;j++) {
+			//printf("sum is %02X\n",sum);
+			sum[i]^=plaintext[j][i];
+		}
+		
+	}
+	if(sum ==0x00) {
+		printf("The XOR of the 255 Pi is\n");
+		for(i=0;i<16;i++) {
+			printf("%02X", sum[i]);
 		}
 	}
-	printf("The sum is: \n");
-	for (i = 0; i < 16; i++) {
-		printf("%02X", sum[i]);
-	}
+	//return sum;
+	//printf("\n");
 }
 
