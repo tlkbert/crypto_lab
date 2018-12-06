@@ -26,30 +26,56 @@ uint8_t key[AES_128_KEY_SIZE] = {
 int main (int argc, char ** argv){
 	//Attack implementation
 	
-	uint8_t **plaintext=NULL;
+	/*uint8_t **plaintext=NULL;
 	int i, j;
 	plaintext = malloc(sizeof(uint8_t *) * 256);
 	for (i = 0; i < 256; i++) {
 		plaintext[i] = malloc(sizeof(uint8_t) * 16);
-	}
+	}*/
+	int i, j;
+	uint8_t plaintext[256][16];
 	//building the set of plaintexts
+	for (i=0;i<256;i++) {
+		for(j=0;j<16;j++) {
+			plaintext[i][j]=0x00;
+		}
+	}
 	for (i=0;i<256;i++) {
 		plaintext[i][0]=i;
 	}
+	/*printf("set\n");
 	for (i=0;i<256;i++) {
-		for(j=1;j<16;j++) {
-			plaintext[i][j]=j+1;
+		for(j=0;j<16;j++) {
+			printf("%02X",plaintext[i][j]);
 		}
-	}
+		printf("\n");
+	}*/
 	//printf("plaintext[0][10]:%02X et 255 10:%02X\n", plaintext[0][10], plaintext[255][10]);
 	// Queries to the encryption oracle
 	for (i = 0; i < 256; i++) {
+		
 		aes128_enc(plaintext[i], key, 4, 0);
 	}
+	/*for (i=0;i<256;i++) {
+		for(j=0;j<16;j++) {
+			printf("%02X",plaintext[i][j]);
+		}
+		printf("\n");
+	}*/
 	//printf("plaintext[0][10]:%02X et 255 10:%02X", plaintext[0][10], plaintext[255][10]);
 	//Partial decryption of the 1/2 round and call to the distinguisher
 	attack(plaintext);
 	//aes_part_decrypt_byte(0x77, 5);
+	uint8_t y[16];
+	next_aes128_round_key(key, y, 0);
+	next_aes128_round_key(y, y, 1);
+	next_aes128_round_key(y, y, 2);
+	next_aes128_round_key(y, y, 3);
+	printf("4 th round key\n");
+	for (i = 0;i<16;i++) {
+		printf("%02X", y[i]);
+	}
+	printf("\n");
 	return 0;
 }
 
