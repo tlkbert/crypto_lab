@@ -63,7 +63,8 @@ static const uint8_t Sinv[256] =
  */
 void prev_aes128_round_key(const uint8_t next_key[16], uint8_t prev_key[16], int round);
 
-int distinguisher(uint8_t plaintext[256][AES_BLOCK_SIZE]);
+int distinguisher(uint8_t plaintext[256][AES_BLOCK_SIZE], int n);
 void aes_part_decrypt(uint8_t state[AES_BLOCK_SIZE], uint8_t key[AES_128_KEY_SIZE]);
 void aes_part_decrypt_byte(uint8_t state_byte, uint8_t key_byte);
-void attack(uint8_t plaintext[256][AES_BLOCK_SIZE], uint8_t key_guess[16]);
+void attack_byte_i(uint8_t plaintext[256][AES_BLOCK_SIZE], uint8_t key_guess[16], int k);
+void aes_key_recovery(uint8_t plaintext[256][AES_BLOCK_SIZE], uint8_t key_guess[16], int k);

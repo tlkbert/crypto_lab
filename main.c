@@ -52,7 +52,7 @@ int main (int argc, char ** argv){
 			key_guess[i] = 0;
 		}
 		key_guess[0] = key_guess_byte;
-		attack(plaintext, key_guess);
+		aes_key_recovery(plaintext, key_guess, 0);
 		key_guess_byte = key_guess_byte + 1;
 	}
 	

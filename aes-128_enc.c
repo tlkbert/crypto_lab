@@ -199,15 +199,15 @@ void aes128_keyed_func(uint8_t key1[AES_128_KEY_SIZE], uint8_t key2[AES_128_KEY_
 		block[i] = enc1[i] ^ enc2[i];
 	}
 }
-
-int distinguisher(uint8_t plaintext[256][AES_BLOCK_SIZE]) {
+//n the byte n of the key we are trying to guess
+int distinguisher(uint8_t plaintext[256][AES_BLOCK_SIZE], int n) {
 	
 	//uint8_t block[AES_BLOCK_SIZE];
 	uint8_t sum[16];
 	int i,j;
 	//xor all the plaintexts
 	for(i=0;i<16;i++) {
-		sum[i]=0x00;//plaintext[0][i];
+		sum[i]=0x00;
 	}
 	for(i=0;i<16;i++) {
 		for(j=0;j<256;j++) {
@@ -216,13 +216,166 @@ int distinguisher(uint8_t plaintext[256][AES_BLOCK_SIZE]) {
 		}
 		
 	}
-	if(sum[0] ==0x00) {
-		printf("The XOR of the 255 Pi is\n");
-		for(i=0;i<16;i++) {
-			printf("%02X", sum[i]);
+	
+	if(n == 0) {
+		if(sum[0] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
 		}
-		printf("\n");
-		return 1;
+	}
+	else if(n==1){
+		if(sum[5] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==2){
+		if(sum[10] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==3){
+		if(sum[15] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==4){
+		if(sum[4] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==5){
+		if(sum[9] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==6){
+		if(sum[14] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==7){
+		if(sum[3] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==8){
+		if(sum[8] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==9){
+		if(sum[13] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==10){
+		if(sum[2] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==11){
+		if(sum[7] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==12){
+		if(sum[12] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==13){
+		if(sum[1] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==14){
+		if(sum[6] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
+	}
+	else if(n==15){
+		if(sum[11] ==0x00) {
+			printf("The XOR of the 255 Pi is\n");
+			for(i=0;i<16;i++) {
+				printf("%02X", sum[i]);
+			}
+			printf("\n");
+			return 1;
+		}
 	}
 	return 0;
 	//printf("\n");
