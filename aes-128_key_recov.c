@@ -48,22 +48,19 @@ void aes_part_decrypt_byte(uint8_t state_byte, uint8_t key_byte) {
 	state_byte = Sinv[state_byte];
 	}
 
-void attack(uint8_t plaintext[256][AES_BLOCK_SIZE]) {
+void attack(uint8_t plaintext[256][AES_BLOCK_SIZE], uint8_t key_guess[16]) {
 	int i, j;
-	uint8_t key_guess_byte, key_guess[16];
-	
-	for (key_guess_byte = 0; key_guess_byte < 256; key_guess_byte++) {
-		//build the key
-		for (i = 1; i < 16; i++) {
-			key_guess[i] = 0;
+	uint8_t to_decrypt[256][16];
+	for (i=0;i<256;i++){
+		for(j=0;j<16;j++){
+			to_decrypt[i][j] = plaintext[i][j];
 		}
-		key_guess[0] = 0x47;
-		for (i = 0; i < 256; i++) {
-			aes_part_decrypt(plaintext[i], key_guess);
-		}
-		if (distinguisher(plaintext) == 1) {
-			printf("the key gess byte is: %02X\n", key_guess[0]);
-		}
+	} 
+	for (i = 0; i < 256; i++) {
+		aes_part_decrypt(to_decrypt[i], key_guess);
+	}
+	if (distinguisher(to_decrypt) == 1) {
+		printf("the key gess byte is: %02X\n", key_guess[0]);
 	}
 }
 
