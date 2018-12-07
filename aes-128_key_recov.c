@@ -35,20 +35,14 @@ void aes_part_decrypt(uint8_t state[AES_BLOCK_SIZE], uint8_t key[AES_128_KEY_SIZ
 	for (i = 0 ; i < 16; i++) {
 		state[i] = Sinv[state[i]];
 	}
-	/* inv ARK with the key of round 4 which have been generated at 
-	the end of round 3 and used for round 4*/
-	/*prev_aes128_round_key(key, prev_key, 3);
-	for (i = 0 ; i < 16; i++) {
-		state[i] = state[i] ^ prev_key[i];
-	}*/
 }
 
 void aes_part_decrypt_byte(uint8_t state_byte, uint8_t key_byte) {
 	state_byte ^= key_byte;
 	state_byte = Sinv[state_byte];
 	}
-
-void attack_byte_i(uint8_t plaintext[256][AES_BLOCK_SIZE], uint8_t key_guess[16], int k) {
+//recover the byte i of the key
+uint8_t attack_byte_i(uint8_t plaintext[256][AES_BLOCK_SIZE], uint8_t key_guess[16], int k) {
 	int i, j;
 	uint8_t to_decrypt[256][16];
 	for (i=0;i<256;i++){
@@ -60,12 +54,15 @@ void attack_byte_i(uint8_t plaintext[256][AES_BLOCK_SIZE], uint8_t key_guess[16]
 		aes_part_decrypt(to_decrypt[i], key_guess);
 	}
 	if (distinguisher(to_decrypt, k) == 1) {
-		printf("the key gess byte is: %02X\n", key_guess[k]);
+		return key_guess[k];
+	}
+	else{
+		return 0xff;
 	}
 }
-
-void aes_key_recovery(uint8_t plaintext[256][AES_BLOCK_SIZE], uint8_t key_guess[16], int k) {
+/*
+void aes_key_recovery(uint8_t plaintext[256][AES_BLOCK_SIZE], uint8_t key_guess[16], int k, int valid, uint8_t key_value) {
 	//int i, j;
-	attack_byte_i(plaintext, key_guess, k);
+	attack_byte_i(plaintext, key_guess, k, valid, key_value);
 }
-
+*/

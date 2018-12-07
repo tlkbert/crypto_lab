@@ -33,7 +33,7 @@ int main (int argc, char ** argv){
 	//building the set of plaintexts
 	for (i=0;i<256;i++) {
 		for(j=0;j<16;j++) {
-			plaintext[i][j]=0x00;
+			plaintext[i][j]=0;
 		}
 	}
 	for (i=0;i<256;i++) {
@@ -45,15 +45,26 @@ int main (int argc, char ** argv){
 		aes128_enc(plaintext[i], key, 4, 0);
 	}
 	
-	key_guess_byte = 0x00;
-	while(key_guess_byte != 255){
-		//build the key
-		for (i = 1; i < 16; i++) {
-			key_guess[i] = 0;
+	uint8_t potential_bytes[AES_128_KEY_SIZE][10];
+	
+	
+	for(j=0; j<16;j++) {
+		int count=0;int vp=2;
+		key_guess_byte = 0x00;
+		while(key_guess_byte != 255){
+			//build the key
+			for (i = 0; i < 16; i++) {
+				key_guess[i] = 0;
+			}
+			key_guess[j] = key_guess_byte;
+			uint8_t key_value_n;
+			key_value_n = attack_byte_i(plaintext, key_guess, j);
+			if (key_value_n != 0xff) {
+				potential_bytes[j][count] = key_value_n;
+				count++;
+			}
+			key_guess_byte = key_guess_byte + 1;
 		}
-		key_guess[0] = key_guess_byte;
-		aes_key_recovery(plaintext, key_guess, 0);
-		key_guess_byte = key_guess_byte + 1;
 	}
 	
 	uint8_t y[16];
@@ -66,6 +77,13 @@ int main (int argc, char ** argv){
 		printf("%02X", y[i]);
 	}
 	printf("\n");
+	for(i=0;i<16;i++){
+		printf("byte %d potentials:\n", i);
+		for(j=0;j<10;j++){
+			printf("%02X", potential_bytes[i][j]);
+		}
+		printf("\n");
+	}
 	return 0;
 }
 
